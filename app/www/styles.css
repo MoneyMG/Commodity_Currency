@@ -1,0 +1,44 @@
+/* styles.css */
+
+.navbar {
+  background-color: #275d38 !important; 
+  border-bottom: 3px solid #ffc107;  
+}
+
+.navbar-brand {
+  color: #ffffff !important; 
+}
+
+.navbar-nav.nav-underline > li > a {
+  color: #ffffff !important; 
+}
+
+.navbar-nav.nav-underline > li.active > a {
+ background-color:  #ffc107 !important; 
+}
+
+/* Change navbar hover effect */
+.navbar-nav.nav-underline > li:not(.active) > a:hover {
+  color: #ffc107 !important;  
+}
+
+#logo-id {
+  position: fixed;
+  right: 10px;
+  top: -75px;
+}
+
+#logo-id img {
+  width: 200px; 
+  height: auto;
+}
+
+
+.tabbable > .nav-tabs > li > a {
+  color: #275d38
+}
+
+.tabbable > .nav-tabs > li:not(.active) > a:hover {
+  background-color: #ffc107 !important;
+  color: #ffffff !important;
+}
