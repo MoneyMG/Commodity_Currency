@@ -24,5 +24,10 @@ function(input, output, session) {
              main = 'Histogram of waiting times')
 
     })
+    
+    output$historical_text <- renderUI({
+      html_content <- readLines("content/historical_text.html")
+      HTML(paste(html_content, collapse = "\n"))
+    })
 
 }

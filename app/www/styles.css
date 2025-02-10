@@ -42,3 +42,10 @@
   background-color: #ffc107 !important;
   color: #ffffff !important;
 }
+
+.centered-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

@@ -1,0 +1,12 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Frame Work**
+
+A formal definition a commodity currency remains surprisingly elusive to this day ([A. Jeanneret, V. Sokolovski, 2024](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4564504)). There is a lack of a consistent definition/procedure that can be utilized to draw a conclusion.
+
