@@ -26,12 +26,11 @@ ui <- tagList(
     tabPanel('New Understandings',
     mainPanel(
       tabsetPanel(
-        tabPanel('Historical Perspective',
+        tabPanel("Defining Commodity-Exposed Currencies",
                  div(class = "centered-content",
                       uiOutput("historical_text")
                  )
                  ),
-        tabPanel("Defining Commodity-Exposed Currencies", "This panel is intentionally left blank"),
         tabPanel("Applying the Definition", "This panel is intentionally left blank")
       )
     )
