@@ -6,7 +6,32 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## **Frame Work**
+## **Framework**
 
-A formal definition a commodity currency remains surprisingly elusive to this day ([A. Jeanneret, V. Sokolovski, 2024](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4564504)). There is a lack of a consistent definition/procedure that can be utilized to draw a conclusion.
+### Defining a Commodity-Exposed Currency
 
+A formal definition a commodity currency remains surprisingly elusive to this day ([A. Jeanneret, V. Sokolovski, 2024](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4564504)). There is a lack of a consistent definition/procedure that can be utilized to draw a conclusion. In the research paper titled *Looking Under the Hood of Commodity Currency Predictability* by Dr. Alexandre Jeanneret and Dr. Valeri Sokolovski, an formal definition has been proposed as:
+
+*"[A commodity currency is] a country's currency that demonstrates a statistically and economically meaningful contemporaneous exposure to its commodity export/import prices, after accounting for the influence of the US dollar."*
+
+### Statistical and Economically Meaningful Exposures
+
+To classify which exporters have such exposures, researchers used a market-based approach utilizing a multivariate linear regression, as follows:
+
+$$
+\Delta s_{i,t} = \alpha_i + \beta_i \Delta CP_{i,t} + \gamma_i DOL_t + \varepsilon_{i,t}
+$$
+
+Where:
+
+-   $\Delta s_{i,t}$ is the **log change in the exchange rate** of currency $i$ (USD per unit of foreign currency).
+-   $\Delta CP_{i,t}$ represents the **log change in the country-specific commodity price index**, calculated using **export/import-weighted changes in international commodity prices**.
+-   $DOL_t$ is the **dollar factor**, capturing the **average movement of exchange rates relative to the U.S. dollar**.
+-   $\beta_i$ is the **commodity price beta**, which measures how much the exchange rate moves in response to changes in commodity prices.
+-   **A statistically significant** $\beta_i$ **indicates a meaningful exposure of the currency to commodity prices**.
+
+To **control for the influence of the U.S. dollar**, the regression includes $DOL_t$ to ensure that movements in commodity prices are not merely reflecting broad USD fluctuations.
+
+The results of this app's independent reproduction of such data for multiple export-heavy currencies are shown in the bubble chart below, with the size of each bubble relating to R\^2, country on the x-axis, and beta on the y-axis.
+
+[Insert bubble chart, preferably Plotly interactive]
