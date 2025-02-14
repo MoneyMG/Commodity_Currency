@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-.historical_text.Rmd
-.applyreg.Rmd
-.screenreg.Rmd
+./app/content/historical_text.Rmd
+./app/content/applyreg.Rmd
+./app/content/screenreg.Rmd
+./app/content/panelregwrite.Rmd

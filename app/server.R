@@ -181,5 +181,12 @@ function(input, output, session) {
       "
       
     })
+    
+    output$panel_write <- renderUI({
+      html_content <- readLines("content/panelwrite.html")
+      HTML(paste(html_content, collapse = "\n"))
+    })
+      
+      
 
 }

@@ -269,7 +269,7 @@ data <- plm::pdata.frame(data, index = c("Country", "Month_Year"))
 fe_model <- plm::plm(Month_Ahead_FX ~ CEP_Log + RER_Level + Momentum_Log + DXY_Level + FX_Vol_Abs + TED_Rel + VIX_Rel + NBER,
                 data = data, model = "within")
 
-summary(fe_model)
+summary(fe_model) %>% as.tibble()
 
 
 

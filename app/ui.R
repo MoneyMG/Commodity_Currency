@@ -58,7 +58,8 @@ ui <- tagList(
       )
     )
     ),
-    tabPanel("Implications", "This panel is intentionally left blank"),
+    tabPanel("Implications", 
+             uiOutput("panel_write")),
     tabPanel("Use Cases", "This panel is intentionally left blank")
   )
 )
