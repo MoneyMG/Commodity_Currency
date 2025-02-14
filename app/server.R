@@ -191,7 +191,7 @@ function(input, output, session) {
       
     output$panel_vis <- renderPlotly({
       
-      data <- read_csv("./content/Panel_Regression.csv")
+      data <- read.csv("./content/Panel_Regression.csv")
 
       data <- plm::pdata.frame(data, index = c("Country", "Month_Year"))
 
