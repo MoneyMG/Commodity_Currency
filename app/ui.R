@@ -51,7 +51,9 @@ ui <- tagList(
                  br(),
                  plotlyOutput("alt_beta"),
                  br(),
-                 textOutput('ident_real')
+                 textOutput('ident_real'),
+                 br(),
+                 br()
                  )
                  )
         )
@@ -62,7 +64,9 @@ ui <- tagList(
              br(),
              plotlyOutput('panel_vis'),
              br(),
-             uiOutput("panel_write")),
+             uiOutput("panel_write"),
+             br(),
+             br()),
     tabPanel("Use Cases", "This panel is intentionally left blank")
   )
 )
