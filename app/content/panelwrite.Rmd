@@ -2,20 +2,25 @@
 output: html_document
 ---
 
-### Model Overview
+### **Key Implications**
+
+The model presented below demonstrates that commodity export prices have a strong and statistically significant impact on the FX returns of commodity-exporting countries, as indicated by the highest beta coefficient. This suggests that commodity prices not only influence short-term FX returns but also contribute to the appreciation of commodity-linked currencies in the following month. The results imply a process of information diffusion, where the market gradually incorporates changes in commodity prices into exchange rates over time. 
+
+### **Transmission Mechanism**
+
+The results support the idea that currency values for commodity-exporting nations reflect terms of trade dynamics, where rising commodity prices lead to higher export revenues, increased demand for the local currency, and thus appreciation. However, because of market frictions, these adjustments are priced in gradually rather than instantaneously.
+
+### **Model Overview**
 
 A fixed effects panel regression was used with a sample that consists of 16 exporters with \~3,000 observations. The dependent variable was next month's FX returns, and independent variables included commodity export prices, return volatility, momentum, and more. The rationale behind a panel regression approach is to control for unobserved country-specific factors by effectively "demeaning" each country.
 
 To apply an analogy for why this is preferred over a simple OLS regression, imagine that you are examining electricity usage for many different households over time and are interested in how weather affects usage. Some homes naturally use more electricity than others due to size, number of residents moving in/out, etc...to eliminate this effect, we subtract each home's average electricity bill over time to remove the effects of "big versus small" homes and focus on the relationship of weather and electricity usage. In our case, some currencies may inherently have stronger FX returns because of carry trade attractiveness or other factors (like how some homes are larger and therefore use more electricity), and a fixed effects model controls for these extraneous variables.
 
-### Results at a Glance
+### **Results at a Glance**
 
-The model has a low R\^2 of 2.07%, consistent with the previously referenced study. This is common in financial markets, especially for models that attempt to predict future returns. Significant key predictors include commodity export prices (CEP) which aggregate the export prices specific to each country, real exchange rates (RER) which drive FX rates through Purchase Power Parity (PPP), the TED spread which is a measure of market risk premiums, and the VIX, which is a measure of global market volatility.
+The model has a low R\^2 of 2.07%, consistent with the previously referenced study. This is common in financial markets, especially for models that attempt to predict future returns due to market efficiency and unobservable macroeconomic factors. Significant key predictors include commodity export prices (CEP) which aggregate the export prices specific to each country, real exchange rates (RER) which drive FX rates through Purchase Power Parity (PPP), the TED spread which is a measure of market risk premiums, and the VIX, which is a measure of global market volatility.
 
-### Key Implications
 
-In general, the model demonstrates that commodity export prices have a strong and statistically significant impact on the FX returns of commodity-exporting countries, as indicated by the highest beta coefficient. This suggests that commodity prices not only influence short-term FX returns but also contribute to the appreciation of commodity-linked currencies in the following month. The results imply a process of information diffusion, where the market gradually incorporates changes in commodity prices into exchange rates over time.
-
-### Other Considerations
+### **Other Considerations**
 
 A negative beta on real effective rates (RER) provides evidence of Purchase Power Parity (PPP) holding, where currencies with real appreciation in their exchange rates are met by devaluation (inflation) in the next period, thus showing mean-reverting tendencies as purchasing power normalizes.

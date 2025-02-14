@@ -11,6 +11,8 @@ library(shiny)
 library(plotly)
 library(ggplot2)
 library(slider)
+library(broom)
+library(plm)
 
 
 function(input, output, session) {
@@ -187,6 +189,41 @@ function(input, output, session) {
       HTML(paste(html_content, collapse = "\n"))
     })
       
+    output$panel_vis <- renderPlotly({
       
+      data <- read_csv("./content/Panel_Regression.csv")
+
+      data <- plm::pdata.frame(data, index = c("Country", "Month_Year"))
+
+
+      fe_model <- plm::plm(Month_Ahead_FX ~ CEP_Log + RER_Level + Momentum_Log + DXY_Level + FX_Vol_Abs + TED_Rel + VIX_Rel + NBER,
+                      data = data, model = "within")
+
+      metrics <- broom::tidy(fe_model) %>% 
+        dplyr::select(-c(std.error, statistic)) %>% 
+        dplyr::mutate(
+        pvals = -log10(p.value),  
+        Significant = p.value < 0.1
+      )
+
+    plotly::plot_ly(
+      metrics,
+      x = ~estimate,
+      y = ~pvals,
+      text = ~term,
+      type = "scatter", 
+      mode = "markers+text",
+      marker = list(size = 10, color = ifelse(metrics$Significant, '#275d38', '#ffc107')),
+      textposition = 'top') %>%
+      plotly::layout(
+        title = 'FX Change Prediction: Coefficients and Statistical Significance (1 Month)',
+             xaxis = list(title = "Coefficient Estimate"),
+             yaxis = list(title = "P-value (-log10)"),
+             showlegend = FALSE) %>% 
+      plotly::add_annotations(x = 0.15, y = 4,text = paste0("R-squared: ", round(broom::glance(fe_model)$r.squared, 3),
+                                                        "<br>Fstat: ", round(broom::glance(fe_model)$statistic, 3)),
+                          showarrow = F, font = list(size = 14))
+      
+    })
 
 }

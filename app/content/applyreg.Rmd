@@ -259,6 +259,7 @@ plotly::subplot(plt1, plt2, nrows = 2, heights = c(.7,.3))
 
 ```{r}
 library(plm)
+library(broom)
 
 
 data <- read_csv("Panel_Regression.csv")
@@ -269,8 +270,37 @@ data <- plm::pdata.frame(data, index = c("Country", "Month_Year"))
 fe_model <- plm::plm(Month_Ahead_FX ~ CEP_Log + RER_Level + Momentum_Log + DXY_Level + FX_Vol_Abs + TED_Rel + VIX_Rel + NBER,
                 data = data, model = "within")
 
-summary(fe_model) %>% as.tibble()
+metrics <- broom::tidy(fe_model) %>% 
+  dplyr::select(-c(std.error, statistic)) %>% 
+  dplyr::mutate(
+    pvals = -log10(p.value),  
+    Significant = p.value < 0.1
+  )
 
+metrics %>% plotly::plot_ly(
+  
+  x = ~estimate,
+  y = ~pvals,
+  text = ~term,
+  type = "scatter", 
+  mode = "markers+text",
+  marker = list(size = 10, color = ifelse(metrics$Significant, '#275d38', '#ffc107')),
+  name = ~hover,
+  hoverinfo = 'text+name',
+  textposition = 'top') %>%
+  plotly::layout(
+             xaxis = list(title = "Coefficient Estimate"),
+             yaxis = list(title = "P-value (-log10)"),
+             showlegend = T) %>% 
+  plotly::add_annotations(x = 0.15, y = 4,text = paste0("R-squared: ", round(broom::glance(fe_model)$r.squared, 3),
+                                                        "<br>Fstat: ", round(broom::glance(fe_model)$statistic, 3)),
+                          showarrow = F, font = list(size = 14))
+  
+
+
+
+
+summary(fe_model)
 
 
 ```

@@ -58,7 +58,10 @@ ui <- tagList(
       )
     )
     ),
-    tabPanel("Implications", 
+    tabPanel("Implications",
+             br(),
+             plotlyOutput('panel_vis'),
+             br(),
              uiOutput("panel_write")),
     tabPanel("Use Cases", "This panel is intentionally left blank")
   )
