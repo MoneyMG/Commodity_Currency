@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-
+.historical_text.Rmd
+.applyreg.Rmd
+.screenreg.Rmd

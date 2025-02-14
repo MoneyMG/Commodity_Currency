@@ -1,0 +1,215 @@
+---
+format: html
+---
+
+```{r find db}
+#| echo: false
+#| warning: false
+
+
+#imf.data::list_datasets()
+
+PCTOT <- imf.data::load_datasets('PCTOT')
+```
+
+```{r get data}
+#| echo: false
+#| warning: false
+
+
+library(tidyverse)
+library(ggplot2)
+library(GGally)
+
+DXY <- tidyquant::tq_get(
+  'DX-Y.NYB',
+  get = 'stock.prices',
+  from = '1980-01-01',
+  to = Sys.Date()
+) %>% 
+  tidyr::drop_na() %>% 
+  dplyr::mutate(delta = (adjusted / lag(adjusted)) -1,
+                month = lubridate::month(date),
+                year = lubridate::year(date)) %>% 
+  dplyr::group_by(year, month) %>% 
+  dplyr::summarise(delta_DOL = mean(delta, na.rm = T)) %>% 
+  dplyr::mutate(date = ceiling_date(as.Date(paste0(year,'-',month, '-01')), unit = 'months') - days(1),
+                date = ifelse(weekdays(date) == 'Saturday', date - days(1), ifelse(weekdays(date) == 'Sunday', date - days(2), date)),
+                date = as.Date(date)) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::select(date, delta_DOL)
+
+
+countries <- c('NO', 'ID', 'IE', 'DK', 'MY', 'CO', 'PE', 'NZ', 'NL', 'ZA', 'CL', 'CA', 'AU','MX', 'BR', 'RU')
+
+results <- list()
+
+for (sym in countries) {
+  #print(sym)
+  results[[sym]] <- PCTOT$get_series('M', sym, 'x_gdp', 'R_RW_IX') %>%
+    mutate(date = ceiling_date(as.Date(paste0(TIME_PERIOD, '-01')), unit = 'months') - days(1)) %>%
+    select(date, value = !!sym(paste0("M.", sym, ".x_gdp.R_RW_IX")))
+}
+
+
+index_data <- bind_rows(results, .id = "country")
+
+index_data <- index_data %>% 
+  dplyr::mutate(value = as.numeric(value)) %>% 
+  tidyr::pivot_wider(id_cols = date, names_from = country, values_from = value) %>% 
+  tidyr::drop_na() %>% 
+  dplyr::mutate(across(all_of(countries), ~ log(.x / lag(.x)), .names = "{.col}_CMDTY")) %>% 
+  dplyr::select(date, contains('_CMDTY')) %>% 
+  tidyr::drop_na()
+
+index_data <- index_data %>% 
+  dplyr::mutate(date = ifelse(weekdays(date) == 'Saturday', date - days(1), ifelse(weekdays(date) == 'Sunday', date - days(2), date)),
+                date = as.Date(date))
+
+  
+
+
+
+
+```
+
+```{r make data}
+#| echo: false
+#| warning: false
+
+
+library(purrr)
+library(broom)
+fx <- read.csv('fx.csv', header = T, sep = ',') %>% 
+  dplyr::mutate(Date = as.Date(Date)) %>% 
+  dplyr::arrange(Date) %>% 
+  dplyr::mutate(Date = ceiling_date(Date, unit = 'months') - days(1),
+                Date = ifelse(weekdays(as.Date(Date)) == 'Saturday', as.Date(Date) - days(1), ifelse(weekdays(as.Date(Date)) == 'Sunday', as.Date(Date) - days(2), as.Date(Date))),
+                date = as.Date(Date)) %>% 
+  dplyr::select(-Date, -DXY) %>% 
+  dplyr::mutate(across(where(is.numeric), ~ 1/.x)) %>% 
+  dplyr::mutate(across(where(is.numeric), ~ log(.x / lag(.x))))
+  
+        
+
+fullset <- index_data %>% 
+  dplyr::left_join(., fx, dplyr::join_by(date)) %>% 
+  dplyr::left_join(., DXY)
+
+currencies <- fullset %>% 
+  tidyr::pivot_longer(-date, names_to = 'series', values_to = 'value') %>% 
+  dplyr::select(series) %>% 
+  dplyr::filter(!grepl('date|_CMDTY|delta', series)) %>% 
+  dplyr::distinct(series) %>% 
+  dplyr::pull(series)
+
+
+
+regression <- tibble::tibble(currency = currencies) %>% 
+  dplyr::mutate(country_id = stringr::str_sub(currency, 1, 2)) %>% 
+  dplyr::mutate(data = purrr::map(country_id, ~ fullset %>% dplyr::select(date, contains(.x), delta_DOL)),
+                model = purrr::map2(data, currency,  ~ lm(as.formula(paste0(.y, '~ ', stringr::str_sub(.y, 1, 2), '_CMDTY + delta_DOL')), data = .x)),
+                metrics = purrr::map(model, broom::tidy),
+                beta = purrr::map2_dbl(metrics, country_id, ~ .x %>% dplyr::filter(grepl(.y, term)) %>% dplyr::pull(estimate)),
+                pval = purrr::map2_dbl(metrics, country_id, ~ .x %>% dplyr::filter(grepl(.y, term)) %>% dplyr::pull(p.value)),
+                std.error = purrr::map2_dbl(metrics, country_id, ~ .x %>% dplyr::filter(grepl(.y, term)) %>% dplyr::pull(std.error)),
+                country = dplyr::case_when(
+                  country_id == 'NO' ~ 'Norway',
+                  country_id == 'ID' ~ 'Indonesia',
+                  country_id == 'IE' ~ 'Ireland',
+                  country_id == 'DK' ~ 'Denmark',
+                  country_id == 'MY' ~ 'Malaysia',
+                  country_id == 'CO' ~ 'Colombia',
+                  country_id == 'PE' ~ 'Peru',
+                  country_id == 'NZ' ~ 'New Zealand',
+                  country_id == 'NL' ~ 'Netherlands',
+                  country_id == 'ZA' ~ 'South Africa',
+                  country_id == 'CL' ~ 'Chile',
+                  country_id == 'CA' ~ 'Canada',
+                  country_id == 'AU' ~ 'Australia',
+                  country_id == 'MX' ~ 'Mexico',
+                  country_id == 'BR' ~ 'Brazil',
+                  country_id == 'RU' ~ 'Russia'
+                ))
+
+visdat <- regression %>% 
+  dplyr::select(country, beta, pval, std.error) %>% 
+  dplyr::arrange(desc(beta)) %>% 
+  dplyr::mutate(significant = dplyr::case_when(
+    pval < 0.1 ~ T,
+    pval > 0.1 ~ F
+  ))
+
+
+plt <- ggplot(visdat, aes(x = fct_reorder(country, beta), y = beta, ymin = beta - std.error, ymax = beta + std.error, color = significant)) +
+  geom_pointrange() +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Commodity Beta Coefficients for Net Exporters",
+       x = '',
+       y = '')
+
+plotly::ggplotly(plt)
+```
+
+```{r beyond}
+#| echo: false
+#| warning: false
+
+
+library(slider)
+
+betadat <- fullset %>% 
+  dplyr::select(date, NOK, NO_CMDTY, delta_DOL) %>% 
+  
+  dplyr::mutate(NOK_vol = slider::slide_dbl(
+    .x = NOK,
+    .f = ~ sd(.x, na.rm = T),
+    .before = 11,
+    .complete = T
+  ) *sqrt(12),
+  NO_CMDTY_vol = slider::slide_dbl(
+    .x = NO_CMDTY,
+    .f = ~ sd(.x, na.rm = T),
+    .before = 11,
+    .complete = T
+  ) *sqrt(12),
+  cor = slider::slide2_dbl(
+    .x = NOK,
+    .y = NO_CMDTY,
+    .f = ~ cor(.x, .y,  use = "complete.obs"),
+    .before = 11,
+    .complete = T
+  ),
+  ratio = NO_CMDTY_vol / NOK_vol,
+  beta = cor * ratio) %>% 
+  tidyr::drop_na() %>% 
+  tidyr::pivot_longer(
+    -date,
+    names_to = 'series',
+    values_to = 'value'
+  )
+
+
+plt1 <- betadat %>% 
+  dplyr::filter(grepl("beta|ratio|cor", series)) %>% 
+  plotly::plot_ly(
+    x = ~date,
+    y = ~value,
+    color = ~series,
+    type = 'scatter',
+    mode = 'lines'
+    )
+
+plt2 <- betadat %>% 
+  dplyr::filter(grepl("vol", series)) %>% 
+  plotly::plot_ly(
+    x = ~date,
+    y = ~value,
+    color = ~series,
+    type = 'scatter',
+    mode = 'lines'
+    )
+
+plotly::subplot(plt1, plt2, nrows = 2, heights = c(.7,.3))
+```

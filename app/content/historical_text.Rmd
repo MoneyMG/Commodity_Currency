@@ -8,13 +8,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## **Framework**
 
-### Defining a Commodity-Exposed Currency
-
 A formal definition a commodity currency remains surprisingly elusive to this day ([A. Jeanneret, V. Sokolovski, 2024](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4564504)). There is a lack of a consistent definition/procedure that can be utilized to draw a conclusion. In the research paper titled *Looking Under the Hood of Commodity Currency Predictability* by Dr. Alexandre Jeanneret and Dr. Valeri Sokolovski, an formal definition has been proposed as:
 
 *"[A commodity currency is] a country's currency that demonstrates a statistically and economically meaningful contemporaneous exposure to its commodity export/import prices, after accounting for the influence of the US dollar."*
 
-### Statistical and Economically Meaningful Exposures
+### **Statistical and Economically Meaningful Exposures**
 
 To classify which exporters have such exposures, researchers used a market-based approach utilizing a multivariate linear regression, as follows:
 
@@ -30,8 +28,18 @@ Where:
 -   $\beta_i$ is the **commodity price beta**, which measures how much the exchange rate moves in response to changes in commodity prices.
 -   **A statistically significant** $\beta_i$ **indicates a meaningful exposure of the currency to commodity prices**.
 
-To **control for the influence of the U.S. dollar**, the regression includes $DOL_t$ to ensure that movements in commodity prices are not merely reflecting broad USD fluctuations.
+To **control for the influence of the U.S. dollar**, the researchers regression includes $DOL_t$ to ensure that movements in commodity prices are not merely reflecting broad USD fluctuations using the researchers use the method outlined by [Verdekhan,2018](https://econpapers.repec.org/article/blajfinan/v_3a73_3ay_3a2018_3ai_3a1_3ap_3a375-418.htm). 
 
-The results of this app's independent reproduction of such data for multiple export-heavy currencies are shown in the bubble chart below, with the size of each bubble relating to R\^2, country on the x-axis, and beta on the y-axis.
+  For the purposes of demonstration a crude DOL is used in our model and is defined by:
 
-[Insert bubble chart, preferably Plotly interactive]
+$$
+\text{DOL}_{t+1} = \frac{1}{N} \sum_{i=1}^{N} \Delta s_{t+1,i}
+$$
+
+Where:
+
+-   \(\text{DOL}_{t+1}\) is the Dollar Risk Factor at time \(t+1\),
+-   \(N\) is the number of currencies,
+-   \(\Delta s_{t+1,i}\) is the change in the exchange rate for the \(i\)-th currency at time \(t+1\).
+
+

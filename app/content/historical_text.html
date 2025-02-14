@@ -354,8 +354,6 @@ display: none;
 
 <div id="framework" class="section level2">
 <h2><strong>Framework</strong></h2>
-<div id="defining-a-commodity-exposed-currency" class="section level3">
-<h3>Defining a Commodity-Exposed Currency</h3>
 <p>A formal definition a commodity currency remains surprisingly elusive
 to this day (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4564504">A.
 Jeanneret, V. Sokolovski, 2024</a>). There is a lack of a consistent
@@ -367,9 +365,9 @@ Sokolovski, an formal definition has been proposed as:</p>
 a statistically and economically meaningful contemporaneous exposure to
 its commodity export/import prices, after accounting for the influence
 of the US dollar.”</em></p>
-</div>
 <div id="statistical-and-economically-meaningful-exposures" class="section level3">
-<h3>Statistical and Economically Meaningful Exposures</h3>
+<h3><strong>Statistical and Economically Meaningful
+Exposures</strong></h3>
 <p>To classify which exporters have such exposures, researchers used a
 market-based approach utilizing a multivariate linear regression, as
 follows:</p>
@@ -396,14 +394,24 @@ exchange rate moves in response to changes in commodity prices.</li>
 exposure of the currency to commodity prices</strong>.</li>
 </ul>
 <p>To <strong>control for the influence of the U.S. dollar</strong>, the
-regression includes <span class="math inline">\(DOL_t\)</span> to ensure
-that movements in commodity prices are not merely reflecting broad USD
-fluctuations.</p>
-<p>The results of this app’s independent reproduction of such data for
-multiple export-heavy currencies are shown in the bubble chart below,
-with the size of each bubble relating to R^2, country on the x-axis, and
-beta on the y-axis.</p>
-<p>[Insert bubble chart, preferably Plotly interactive]</p>
+researchers regression includes <span class="math inline">\(DOL_t\)</span> to ensure that movements in
+commodity prices are not merely reflecting broad USD fluctuations using
+the researchers use the method outlined by <a href="https://econpapers.repec.org/article/blajfinan/v_3a73_3ay_3a2018_3ai_3a1_3ap_3a375-418.htm">Verdekhan,2018</a>.</p>
+<p>For the purposes of demonstration a crude DOL is used in our model
+and is defined by:</p>
+<p><span class="math display">\[
+\text{DOL}_{t+1} = \frac{1}{N} \sum_{i=1}^{N} \Delta s_{t+1,i}
+\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(\text{DOL}_{t+1}\)</span> is the Dollar
+Risk Factor at time <span class="math inline">\(t+1\)</span>,</li>
+<li><span class="math inline">\(N\)</span> is the number of
+currencies,</li>
+<li><span class="math inline">\(\Delta s_{t+1,i}\)</span> is the change
+in the exchange rate for the <span class="math inline">\(i\)</span>-th
+currency at time <span class="math inline">\(t+1\)</span>.</li>
+</ul>
 </div>
 </div>
 

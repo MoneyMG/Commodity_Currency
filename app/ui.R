@@ -24,14 +24,36 @@ ui <- tagList(
         "Looking Under the Hood of Commodity Currencies"
       ),
     tabPanel('New Understandings',
-    mainPanel(
+    fluidPage(
       tabsetPanel(
         tabPanel("Defining Commodity-Exposed Currencies",
                  div(class = "centered-content",
                       uiOutput("historical_text")
                  )
                  ),
-        tabPanel("Applying the Definition", "This panel is intentionally left blank")
+        tabPanel("Applying the Definition",
+                 sidebarLayout(
+                   sidebarPanel(
+                     selectInput("Type", "Choose Beta Strength", choices = c("Strongly Positive", "Moderately Postive", "Slightly Postive"), selected = "Moderately Positive")
+                   ),
+                 mainPanel(
+                 h2(strong('Static Beta')),
+                 h3(strong('Feb 1992 - July 2024')),
+                 br(),
+                 textOutput('importer_reg_sup'),
+                 br(),
+                 plotlyOutput("importer_reg"),
+                 br(),
+                 textOutput('segway'),
+                 br(),
+                 h2(strong('Under The Hood')), #change this
+                 br(),
+                 plotlyOutput("alt_beta"),
+                 br(),
+                 textOutput('ident_real')
+                 )
+                 )
+        )
       )
     )
     ),
