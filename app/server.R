@@ -206,24 +206,25 @@ function(input, output, session) {
         Significant = p.value < 0.1
       )
 
-    plotly::plot_ly(
-      metrics,
-      x = ~estimate,
-      y = ~pvals,
-      text = ~term,
-      type = "scatter", 
-      mode = "markers+text",
-      marker = list(size = 10, color = ifelse(metrics$Significant, '#275d38', '#ffc107')),
-      textposition = 'top') %>%
-      plotly::layout(
-        title = 'FX Change Prediction: Coefficients and Statistical Significance (1 Month)',
-             xaxis = list(title = "Coefficient Estimate"),
-             yaxis = list(title = "P-value (-log10)"),
-             showlegend = FALSE) %>% 
-      plotly::add_annotations(x = 0.15, y = 4,text = paste0("R-squared: ", round(broom::glance(fe_model)$r.squared, 3),
-                                                        "<br>Fstat: ", round(broom::glance(fe_model)$statistic, 3)),
-                          showarrow = F, font = list(size = 14))
+      plt <- ggplot(metrics, aes(x = estimate, y = -log10(pvals), label = term)) +
+        geom_point(aes(color = Significant), size = 3) +
+        geom_text(aes(label = term), vjust = 1) +
+        scale_color_manual(values = c('#275d38', '#ffc107')) +
+        labs(
+          title = 'FX Change Prediction: Coefficients and Statistical Significance (1 Month)',
+          x = 'Coefficient Estimate',
+          y = 'P-value(-log10)'
+        ) +
+        theme_minimal() +
+        theme(legend.position = 'none') +
+        annotate(
+          "text", x = 0.15, y = 4,
+          label = paste0("R-squared: ", round(glance(fe_model)$r.squared, 3),
+                         "\nF-stat: ", round(glance(fe_model)$statistic, 3)),
+          size = 5
+        )
       
+      plotly::ggplotly(plt)
     })
 
 }
