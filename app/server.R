@@ -26,7 +26,7 @@ function(input, output, session) {
       visdat <- read.csv("./content/visdat.csv")
       
       plt <- ggplot(visdat, 
-                    aes(x = fct_reorder(country, beta), y = beta, ymin = beta - std.error, ymax = beta + std.error, color = Significant, 
+                    aes(x = forcats::fct_reorder(country, beta), y = beta, ymin = beta - std.error, ymax = beta + std.error, color = Significant, 
                         text = paste("Country:", country, "<br>Beta:", round(beta, 2), "<br>Std. Error:", round(std.error, 2)))) +
         geom_pointrange() +
         coord_flip() +
